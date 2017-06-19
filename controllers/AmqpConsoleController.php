@@ -8,7 +8,7 @@
 namespace rooooodik\amqp\controllers;
 
 use rooooodik\amqp\components\AmqpTrait;
-use rooooodik\commands\Controller;
+use webtoucher\commands\Controller;
 
 
 /**

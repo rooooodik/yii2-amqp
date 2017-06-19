@@ -11,7 +11,7 @@ use Yii;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPConnection;
 use rooooodik\amqp\components\Amqp;
-use rooooodik\commands\Controller;
+use webtoucher\commands\Controller;
 
 
 /**

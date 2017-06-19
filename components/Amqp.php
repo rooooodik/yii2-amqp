@@ -141,7 +141,7 @@ class Amqp extends Component
      */
     public function ask($exchange, $routing_key, $message, $timeout)
     {
-        list ($queueName) = $this->channel->queue_declare('', false, false, true, false);
+        list ($queueName) = $this->channel->queue_declare($routing_key, false, true, false, false);
         $message = $this->prepareMessage($message, [
             'reply_to' => $queueName,
         ]);
@@ -171,7 +171,7 @@ class Amqp extends Component
      */
     public function listen($exchange, $routing_key, $callback, $type = self::TYPE_TOPIC, $noAck = false)
     {
-        list ($queueName) = $this->channel->queue_declare();
+        list ($queueName) = $this->channel->queue_declare($routing_key, false, true, false, false);
         if ($type == Amqp::TYPE_DIRECT) {
             $this->channel->exchange_declare($exchange, $type, false, true, false);
         }
@@ -202,6 +202,12 @@ class Amqp extends Component
         if (is_array($message) || is_object($message)) {
             $message = Json::encode($message);
         }
-        return new AMQPMessage($message, $properties);
+        return new AMQPMessage(
+            $message,
+            !is_null($properties) ? $properties : [
+                'delivery_mode' => 2,
+            ]
+        );
     }
+
 }
