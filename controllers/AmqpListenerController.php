@@ -1,20 +1,20 @@
 <?php
 /**
- * @link https://github.com/webtoucher/yii2-amqp
+ * @link https://github.com/rooooodik/yii2-amqp
  * @copyright Copyright (c) 2014 webtoucher
  * @license https://github.com/webtoucher/yii2-amqp/blob/master/LICENSE.md
  */
 
-namespace webtoucher\amqp\controllers;
+namespace rooooodik\amqp\controllers;
 
 use yii\console\Exception;
 use yii\helpers\Inflector;
 use yii\helpers\Json;
 use PhpAmqpLib\Message\AMQPMessage;
-use webtoucher\amqp\components\Amqp;
-use webtoucher\amqp\components\AmqpInterpreter;
-use webtoucher\amqp\components\AmpqInterpreterInterface;
-use webtoucher\commands\Controller;
+use rooooodik\amqp\components\Amqp;
+use rooooodik\amqp\components\AmqpInterpreter;
+use rooooodik\amqp\components\AmpqInterpreterInterface;
+use rooooodik\commands\Controller;
 
 
 /**
@@ -59,7 +59,9 @@ class AmqpListenerController extends AmqpConsoleController
                 'routing_key' => $msg->get('routing_key'),
                 'reply_to' => $msg->has('reply_to') ? $msg->get('reply_to') : null,
             ];
-            $interpreter->$method(Json::decode($msg->body, true), $info);
+            if ($interpreter->$method(Json::decode($msg->body, true), $info)) {
+                $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+            }
         } else {
             if (!isset($this->interpreters[$this->exchange])) {
                 $interpreter = new AmqpInterpreter();

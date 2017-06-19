@@ -5,10 +5,10 @@
  * @license https://github.com/webtoucher/yii2-amqp/blob/master/LICENSE.md
  */
 
-namespace webtoucher\amqp\controllers;
+namespace rooooodik\amqp\controllers;
 
-use webtoucher\amqp\components\AmqpTrait;
-use webtoucher\commands\Controller;
+use rooooodik\amqp\components\AmqpTrait;
+use rooooodik\commands\Controller;
 
 
 /**
@@ -28,7 +28,7 @@ abstract class AmqpConsoleController extends Controller
     {
         return array_merge(
             parent::options($actionId),
-            ['exchange']
+            ['exchange', 'noAck']
         );
     }
 }

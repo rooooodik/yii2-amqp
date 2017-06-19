@@ -5,7 +5,7 @@
  * @license https://github.com/webtoucher/yii2-amqp/blob/master/LICENSE.md
  */
 
-namespace webtoucher\amqp\components;
+namespace rooooodik\amqp\components;
 
 use yii\base\Component;
 use yii\base\Exception;
@@ -21,6 +21,7 @@ use PhpAmqpLib\Message\AMQPMessage;
  *
  * @property AMQPConnection $connection AMQP connection.
  * @property AMQPChannel $channel AMQP channel.
+ * @param bool $noAck
  * @author Alexey Kuznetsov <mirakuru@webtoucher.ru>
  * @since 2.0
  */
@@ -162,21 +163,20 @@ class Amqp extends Component
     }
 
     /**
-     * Listens the exchange for messages.
-     *
-     * @param string $exchange
-     * @param string $routing_key
-     * @param callable $callback
+     * @param $exchange
+     * @param $routing_key
+     * @param $callback
      * @param string $type
+     * @param bool $noAck
      */
-    public function listen($exchange, $routing_key, $callback, $type = self::TYPE_TOPIC)
+    public function listen($exchange, $routing_key, $callback, $type = self::TYPE_TOPIC, $noAck = false)
     {
         list ($queueName) = $this->channel->queue_declare();
         if ($type == Amqp::TYPE_DIRECT) {
             $this->channel->exchange_declare($exchange, $type, false, true, false);
         }
         $this->channel->queue_bind($queueName, $exchange, $routing_key);
-        $this->channel->basic_consume($queueName, '', false, true, false, false, $callback);
+        $this->channel->basic_consume($queueName, '', false, $noAck, false, false, $callback);
 
         while (count($this->channel->callbacks)) {
             $this->channel->wait();

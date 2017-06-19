@@ -5,13 +5,13 @@
  * @license https://github.com/webtoucher/yii2-amqp/blob/master/LICENSE.md
  */
 
-namespace webtoucher\amqp\components;
+namespace rooooodik\amqp\components;
 
 use Yii;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Connection\AMQPConnection;
-use webtoucher\amqp\components\Amqp;
-use webtoucher\commands\Controller;
+use rooooodik\amqp\components\Amqp;
+use rooooodik\commands\Controller;
 
 
 /**
@@ -36,6 +36,13 @@ trait AmqpTrait
      * @var string
      */
     public $exchange = 'exchange';
+
+    /**
+     * Acknowledgment flag.
+     *
+     * @var bool
+     */
+    public $noAck = false;
 
     /**
      * Returns AMQP object.
