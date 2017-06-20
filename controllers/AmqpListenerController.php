@@ -61,6 +61,9 @@ class AmqpListenerController extends AmqpConsoleController
             ];
             if ($interpreter->$method(Json::decode($msg->body, true), $info)) {
                 $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+            } else {
+                $this->amqp->channel->basic_publish($msg, $msg->get('exchange'), $msg->get('routing_key'));
+                $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
             }
         } else {
             if (!isset($this->interpreters[$this->exchange])) {
