@@ -168,8 +168,9 @@ class Amqp extends Component
      * @param $callback
      * @param string $type
      * @param bool $noAck
+     * @param int $timeout
      */
-    public function listen($exchange, $routing_key, $callback, $type = self::TYPE_TOPIC, $noAck = false)
+    public function listen($exchange, $routing_key, $callback, $type = self::TYPE_TOPIC, $noAck = false, $timeout = 0)
     {
         list ($queueName) = $this->channel->queue_declare($routing_key, false, true, false, false);
         if ($type == Amqp::TYPE_DIRECT) {
@@ -179,7 +180,7 @@ class Amqp extends Component
         $this->channel->basic_consume($queueName, '', false, $noAck, false, false, $callback);
 
         while (count($this->channel->callbacks)) {
-            $this->channel->wait();
+            $this->channel->wait(null, false, $timeout);
         }
 
         $this->channel->close();
