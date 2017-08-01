@@ -177,6 +177,7 @@ class Amqp extends Component
             $this->channel->exchange_declare($exchange, $type, false, true, false);
         }
         $this->channel->queue_bind($queueName, $exchange, $routing_key);
+        $this->channel->basic_qos(null, 1, null);
         $this->channel->basic_consume($queueName, '', false, $noAck, false, false, $callback);
 
         while (count($this->channel->callbacks)) {
