@@ -32,9 +32,15 @@ class AmqpListenerController extends AmqpConsoleController
      */
     public $interpreters = [];
 
-    public function actionRun($routingKey = '#', $type = Amqp::TYPE_TOPIC)
+    public function actionRun($routingKey = '#', $type = Amqp::TYPE_TOPIC, $timeout = 0)
     {
-        $this->amqp->listen($this->exchange, $routingKey, [$this, 'callback'], $type);
+        try {
+            $this->amqp->listen($this->exchange, $routingKey, [$this, 'callback'], $type, false, $timeout);
+        } catch (\Exception $e) {
+            if (!preg_match('/The connection timed out after [0-9]+ sec while awaiting incoming data/i' , $e->getMessage())) { // ignore timeout
+                throw $e;
+            }
+        }
     }
 
     public function callback(AMQPMessage $msg)
