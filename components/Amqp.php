@@ -7,6 +7,7 @@
 
 namespace rooooodik\amqp\components;
 
+use PhpAmqpLib\Exception\AMQPTimeoutException;
 use yii\base\Component;
 use yii\base\Exception;
 use yii\helpers\Inflector;
@@ -127,7 +128,12 @@ class Amqp extends Component
         if ($type == self::TYPE_TOPIC) {
             $this->channel->exchange_declare($exchange, $type, false, true, false);
         }
-        $this->channel->basic_publish($message, $exchange, $routing_key);
+        try {
+            $this->channel->basic_publish($message, $exchange, $routing_key);
+        } catch (AMQPTimeoutException $e) {
+            $this->connection->reconnect();
+            $this->channel->basic_publish($message, $exchange, $routing_key);
+        }
     }
 
     /**
